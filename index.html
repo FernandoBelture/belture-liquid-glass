@@ -975,6 +975,39 @@ h1[tabindex="-1"]:focus{outline:none}
 /* tabela de 9 colunas não cabe ao lado do gráfico abaixo de ~1700 px: empilha */
 @media (max-width:1700px){.rel-chan{grid-template-columns:minmax(0,1fr)}}
 
+/* ===== Análise e gráficos: hierarquia ===== */
+.rel-hero{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:4px}
+.rel-hero>.rel-tile{padding:18px 20px;grid-row:auto;grid-template-rows:none;display:grid;gap:6px;align-content:start}
+.rel-hero>.rel-tile+.rel-tile{box-shadow:inset 1px 0 0 var(--line-2)}
+.rel-hero .rel-tv.big{font-size:34px}
+.rel-hero .rel-spk{height:34px}
+.rel-main{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:stretch}
+.rel-fun{padding-bottom:18px}
+.rel-fun #relDashFunnel{padding:0 20px}
+.rel-more{display:inline-block}
+.rel-more>summary{list-style:none;cursor:pointer}
+.rel-more>summary::-webkit-details-marker{display:none}
+.rel-more[open]{display:block;width:100%}
+.rel-more>.rel-lines{margin-top:8px;padding:0}
+.rel-list ul{list-style:none;margin:0;padding:0 20px 18px;display:grid;gap:12px}
+.rel-list li{display:grid;grid-template-columns:minmax(0,1fr) auto 58px;gap:4px 12px;align-items:center}
+.rel-list .rel-ln{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font-weight:560;text-decoration:none}
+a.rel-ln:hover{color:var(--brand-ink);text-decoration:underline}
+.rel-list li>.num.subtle{text-align:right;font-size:13px}
+.rel-list .bar{grid-column:1/-1;height:6px;border-radius:999px;background:var(--fill);overflow:hidden}
+.rel-list .bar i{display:block;height:100%;border-radius:inherit;background:var(--c1)}
+.rel-list .bar.c2 i{background:var(--c2)}
+.rel-more-acc{padding:0}
+.rel-more-acc>button{display:flex;align-items:center;gap:12px;width:100%;padding:16px 18px;text-align:left}
+.rel-more-acc>button>span{flex:1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rel-more-acc>button>svg{transition:transform var(--t2) var(--spring)}
+.rel-more-acc>button[aria-expanded="true"]>svg{transform:rotate(180deg)}
+@media (max-width:1100px){.rel-hero{grid-template-columns:repeat(2,minmax(0,1fr))}.rel-hero>.rel-tile:nth-child(3){box-shadow:inset 0 1px 0 var(--line-2)}.rel-hero>.rel-tile:nth-child(4){box-shadow:inset 1px 0 0 var(--line-2),inset 0 1px 0 var(--line-2)}.rel-main{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.rel-hero .rel-tv.big{font-size:26px}.rel-hero>.rel-tile{padding:14px}}
+.rel-fun .card-head,.rel-list .card-head{padding:18px 20px 14px}
+.rel-fun .fs small.fdrop{color:var(--ink-3)}
+.rel-more-acc .pnl>div{overflow:hidden;min-height:0}
+
 </style>
 <style>/* área: campanhas */
 /* área campanhas: prefixo .cmp- */
@@ -9332,10 +9365,10 @@ function delta(cur, prev, kind = 'vol') {
   const cls = kind === 'fail' ? (up ? 'dn' : 'up') : kind === 'vol' ? (up ? 'up' : 'flat') : 'flat';
   return `<span class="delta ${cls}" title="Em relação ao período anterior">${ico(up ? 'up' : 'down')}${f.pct(Math.abs(p))}<span class="sr"> ${up ? 'a mais' : 'a menos'} que o período anterior</span></span>`;
 }
-function tile({ label, icon, v, prev, kind = 'vol', sub, spark, money, color, live, big }) {
-  const shown = money ? f.brl(v) : f.n(v);
+function tile({ label, icon, v, prev, kind = 'vol', sub, spark, money, pct, color, live, big }) {
+  const shown = money ? f.brl(v) : pct ? f.pct(v) : f.n(v);
   return `<div class="rel-tile"><div class="rel-tl">${icon ? ico(icon, 'sm') : ''}<span${live ? ' class="rel-live"' : ''}>${esc(label)}</span></div>
-    <div class="rel-tv num${big ? ' big' : ''}" data-count="${v}"${money ? ' data-prefix="R$ " data-dec="2"' : ''}>${shown}</div>
+    <div class="rel-tv num${big ? ' big' : ''}" data-count="${v}"${money ? ' data-prefix="R$ " data-dec="2"' : pct ? ' data-suffix="%" data-dec="1"' : ''}>${shown}</div>
     <div class="rel-ts">${sub ? `<span>${sub}</span>` : ''}${prev != null ? delta(v, prev, kind) : ''}</div>
     ${spark ? `<div class="rel-spk" data-spark="${spark.join(',')}" data-color="${color || 'var(--c1)'}"></div>` : ''}</div>`;
 }
@@ -9437,50 +9470,76 @@ function dashData() {
   const top = [['Black Friday VIP', .39], ['Carrinho abandonado novembro', .22], ['Lançamento coleção verão', .15]].map(([n, p]) => ({ n, v: Math.round(clicks.v * p) }));
   return { st, by, clicks, val, valPrev: tot, channels, top, okKey, P };
 }
+/* Hierarquia da tela (do mais importante para o detalhe):
+   1. quatro números do período, grandes, com tendência;  2. gráfico principal + funil do envio ao clique;
+   3. canais e campanhas em listas curtas;  4. "Detalhes" fechado: status um a um, tabela de canais e últimos disparos.
+   Regra de cor: número em tinta neutra; roxo da marca só na série principal; rosa só para cliques;
+   verde e vermelho só na tendência e em falhas. */
 function dashRender() {
   const host = $('#relDashBody'), s = stOf('dashboard');
-  $('#relDashSub').textContent = `Seus envios ${D.src === 'api' ? 'via API' : 'de campanhas'} nos ${PER[D.per].lbl}${D.ch === 'ALL' ? '' : ', canal ' + CH[D.ch]}, comparados ao período anterior.`;
+  $('#relDashSub').textContent = `${D.src === 'api' ? 'Envios via API' : 'Campanhas'} · ${PER[D.per].lbl}${D.ch === 'ALL' ? '' : ' · ' + CH[D.ch]} · comparado ao período anterior`;
   if (s === 'loading') return host.innerHTML = skel(2);
   if (s === 'error') return host.innerHTML = errBox('Não foi possível carregar os números do período. Verifique a conexão e tente de novo.');
-  if (s === 'empty') return host.innerHTML = `<div class="card">${emptyBox('Nenhum envio no período', 'Ainda não há envios com estes filtros. Amplie o período ou crie uma campanha para ver os números aqui.', `<button class="btn outline" data-rel-per="30d">Ver últimos 30 dias</button>`)}</div>`;
-  const d = dashData(), isC = D.src === 'campaign', by = d.by;
+  if (s === 'empty') return host.innerHTML = `<div class="card">${emptyBox('Nenhum envio no período', 'Ainda não há envios com estes filtros. Amplie o período ou crie uma campanha.', `<button class="btn outline" data-rel-per="30d">Ver últimos 30 dias</button>`)}</div>`;
+  const d = dashData(), isC = D.src === 'campaign', by = d.by, ok = by[d.okKey];
   const t = k => { const x = by[k]; return tile({ label: x.label, icon: x.icon, v: x.v, prev: x.prev, kind: FAILS.has(x.key) ? 'fail' : 'vol', sub: f.brl(x.v * PRICE[D.src]), spark: x.series, color: FAILS.has(x.key) ? 'var(--ink-3)' : 'var(--c1)' }); };
   const groups = isC ? [
-    ['Preparação', 'encurtamento e pré-fila', ['pending', 'pending_shortlink', 'pending_dispatch_ready']],
-    ['Em trânsito', 'na fila e na operadora', ['queued', 'sending', 'awaiting_provider_status']],
-    ['Resultado', 'entregues e lidas são parte dos enviados', ['sent', ...(by.delivered.v ? ['delivered'] : []), ...(by.read.v ? ['read'] : [])]],
+    ['Preparação', '', ['pending', 'pending_shortlink', 'pending_dispatch_ready']],
+    ['Em trânsito', '', ['queued', 'sending', 'awaiting_provider_status']],
+    ['Resultado', '', ['sent', ...(by.delivered.v ? ['delivered'] : []), ...(by.read.v ? ['read'] : [])]],
     ['Não enviados', 'devolvidos ao saldo', ['failed', 'shortlink_failed_pending', 'cancelled']]]
-    : [['Entrada', 'recebidos pela API', ['PENDING', 'READY_TO_SEND']], ['Provedor', 'na fila e aceitos', ['QUEUED_FOR_PROVIDER', 'PROVIDER_ACCEPTED']], ['Resultado', 'confirmados pelo provedor', ['FINAL_SUCCESS']], ['Não enviados', 'devolvidos ao saldo', ['BILLING_REJECTED', 'PROVIDER_FAILED', 'FINAL_FAILED']]];
-  const v = d.val, ctr = d.clicks.v / by[d.okKey].v * 100;
+    : [['Entrada', '', ['PENDING', 'READY_TO_SEND']], ['Provedor', '', ['QUEUED_FOR_PROVIDER', 'PROVIDER_ACCEPTED']], ['Resultado', '', ['FINAL_SUCCESS']], ['Não enviados', 'devolvidos ao saldo', ['BILLING_REJECTED', 'PROVIDER_FAILED', 'FINAL_FAILED']]];
+  const v = d.val, ctr = d.clicks.v / ok.v * 100;
+  const failN = d.st.filter(x => FAILS.has(x.key)).reduce((a, x) => a + x.v, 0), failP = d.st.filter(x => FAILS.has(x.key)).reduce((a, x) => a + x.prev, 0);
+  const rate = isC ? by.delivered.v / ok.v * 100 : ok.v / (ok.v + failN) * 100;
+  const rateP = isC ? by.delivered.prev / ok.prev * 100 : ok.prev / (ok.prev + failP) * 100;
   const lineDefs = [...(isC ? CS : AS).map(([k, l]) => [k, l]), ['clicks', 'Cliques']];
+  const MAIN = isC ? ['sent', 'delivered', 'clicks', 'failed'] : ['FINAL_SUCCESS', 'PROVIDER_ACCEPTED', 'clicks', 'FINAL_FAILED'];
   const sel = D.lines[D.src];
+  const chip = ([k, l], i) => `<button class="chip" aria-pressed="${sel.has(k)}" data-v="${k}"><i style="background:${LINE_COLOR[k] || ['var(--c5)', 'var(--c6)', 'var(--c3)'][i % 3]}"></i>${esc(l)}</button>`;
+  const steps = isC ? [['Enviados', ok.v], ['Entregues', by.delivered.v], ['Lidas', by.read.v], ['Cliques', d.clicks.v]].filter(x => x[1])
+    : [['Aceitos', by.PROVIDER_ACCEPTED.v + ok.v], ['Concluídos', ok.v], ['Cliques', d.clicks.v]];
+  const chMax = Math.max(...d.channels.map(c => c.sent));
   host.innerHTML = `
-  <section class="rel-sec" aria-labelledby="relValT"><div class="rel-sh"><h2 class="h2" id="relValT">Valor dos envios</h2><span class="hint">Total = todos os envios × preço. Cobrado = enviados. Devolvido = falhas e cancelamentos.</span></div>
-    <div class="card rel-vals">
-      <div>${tile({ label: 'Valor total', icon: 'wallet', v: v.total, prev: d.valPrev, kind: 'neutral', money: true, big: true, sub: v.prog > 0 ? 'inclui ' + f.brl(v.prog) + ' em andamento' : 'todos os envios' })}</div>
-      <div>${tile({ label: 'Valor cobrado', icon: 'check', v: v.charged, money: true, big: true, sub: 'envios realizados com sucesso' })}</div>
-      <div>${tile({ label: 'Valor devolvido', icon: 'rel-undo', v: v.refunded, money: true, big: true, sub: 'falhas e cancelamentos (não cobrados)' })}</div>
-    </div></section>
-  <section class="rel-sec" aria-labelledby="relStT"><div class="rel-sh"><h2 class="h2" id="relStT">Envios por status</h2><span class="hint">Na ordem do fluxo. Valor em R$ abaixo de cada número.</span></div>
-    <div class="rel-g2">${groups.map(([g, h, ks]) => group(g, h, ks.map(t))).join('')}</div></section>
-  <div class="grid-2">
-    <div class="card chart-card"><div class="card-head"><h2 class="h2">Linha temporal</h2><span class="hint" style="margin-left:auto">${d.P.step === 'm' ? 'por mês' : d.P.step === 'w' ? 'por semana' : 'por dia'}</span></div>
-      <div class="rel-lines" role="group" aria-label="Linhas do gráfico">${lineDefs.map(([k, l], i) => `<button class="chip" aria-pressed="${sel.has(k)}" data-v="${k}"><i style="background:${LINE_COLOR[k] || ['var(--c5)', 'var(--c6)', 'var(--c3)'][i % 3]}"></i>${esc(l)}</button>`).join('')}</div>
-      <div id="relDashLine"></div></div>
-    <div class="card rel-eng"><h2 class="h2">Engajamento</h2>
-      ${tile({ label: 'Total de cliques', icon: 'rel-click', v: d.clicks.v, prev: d.clicks.prev, big: true, sub: f.pct(ctr) + ' dos enviados clicaram', spark: d.clicks.series, color: 'var(--c2)' })}
-      ${isC ? `<div><span class="eyebrow">Top 3 campanhas (cliques)</span><ol class="rel-top" style="margin-top:8px">${d.top.map((x, i) => `<li><span class="n">${i + 1}.</span><a href="#campanha-detalhe" data-go="campanha-detalhe" data-state='${esc(JSON.stringify({ id: campId(x.n), name: x.n }))}'>${esc(x.n)}${ico('rel-ext', 'sm')}</a><b class="num">${f.n(x.v)}</b><div class="bar"><i style="width:${(x.v / d.top[0].v * 100).toFixed(0)}%;background:var(--c2)"></i></div></li>`).join('')}</ol></div>` : `<p class="hint">Cliques nos links encurtados enviados pela integração. Para ver por pedido, abra o <a class="link" href="#links" data-go="links">relatório de links</a>.</p>`}
-    </div>
+  <div class="card rel-hero">
+    ${tile({ label: isC ? 'Enviados' : 'Concluídos', icon: 'send', v: ok.v, prev: ok.prev, big: true, spark: ok.series, color: 'var(--c1)' })}
+    ${tile({ label: isC ? 'Taxa de entrega' : 'Taxa de sucesso', icon: 'check', v: +rate.toFixed(1), prev: +rateP.toFixed(1), pct: true, big: true, sub: `${f.n(failN)} não enviados` })}
+    ${tile({ label: 'Cliques', icon: 'rel-click', v: d.clicks.v, prev: d.clicks.prev, big: true, sub: `${f.pct(ctr)} clicaram`, spark: d.clicks.series, color: 'var(--c2)' })}
+    ${tile({ label: 'Valor cobrado', icon: 'wallet', v: v.charged, money: true, big: true, sub: `${f.brl(v.refunded)} devolvido` })}
   </div>
-  <div class="card"><div class="tc-head"><h2 class="h2">Canais</h2><div class="legend"><span><i style="background:var(--c1)"></i>Enviado</span><span><i style="background:var(--c3)"></i>Entregue</span><span><i style="background:var(--c4)"></i>Lida</span><span><i style="background:var(--bad)"></i>Falhou</span></div></div>
-    <div class="rel-chan"><div id="relDashChart"></div>
-      <div class="tbl-wrap"><table class="table rel-ctbl"><thead><tr><th>Canal</th><th class="r">Pré-fila</th><th class="r">Na fila</th><th class="r">Enviando</th><th class="r">Enviado</th><th class="r">Entregue</th><th class="r">Lida</th><th class="r">Falhou</th><th class="r">Cliques</th></tr></thead>
-      <tbody>${d.channels.map(c => `<tr><td>${chan(c.c)}</td>${[c.pre, c.queue, c.sending, c.sent, c.deliv, c.read, c.failed, c.clicks].map((n, i) => `<td class="rel-num">${i === 5 && c.c === 'SMS' ? none('n/a') : f.n(n)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></div>
-  <div class="card"><div class="tc-head"><h2 class="h2">Últimos disparos</h2><button class="btn ghost sm" data-go="relatorio-envios">Ver relatório completo${ico('chev', 'sm')}</button></div>
-    ${dispTable(dispatches(D.src).filter(x => D.ch === 'ALL' || x.channel === D.ch).slice(0, 6), D.src)}</div>`;
+  <div class="rel-main">
+    <div class="card chart-card"><div class="card-head"><h2 class="h2">Envios no período</h2><span class="hint" style="margin-left:auto">${d.P.step === 'm' ? 'por mês' : d.P.step === 'w' ? 'por semana' : 'por dia'}</span></div>
+      <div class="rel-lines" role="group" aria-label="Linhas do gráfico">${lineDefs.filter(x => MAIN.includes(x[0])).map(chip).join('')}
+        <details class="rel-more"><summary class="chip">Mais linhas</summary><div class="rel-lines">${lineDefs.filter(x => !MAIN.includes(x[0])).map(chip).join('')}</div></details></div>
+      <div id="relDashLine"></div></div>
+    <div class="card rel-fun"><div class="card-head"><h2 class="h2">Do envio ao clique</h2></div><div id="relDashFunnel"></div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card rel-list"><div class="card-head"><h2 class="h2">Canais</h2><span class="hint" style="margin-left:auto">enviados · entrega</span></div>
+      <ul>${d.channels.slice().sort((a, b) => b.sent - a.sent).map(c => `<li><span class="rel-ln">${chan(c.c)}</span><b class="num">${f.n(c.sent)}</b><span class="num subtle">${f.pct(c.deliv / c.sent * 100)}</span><div class="bar"><i style="width:${(c.sent / chMax * 100).toFixed(0)}%"></i></div></li>`).join('')}</ul></div>
+    <div class="card rel-list"><div class="card-head"><h2 class="h2">${isC ? 'Campanhas com mais cliques' : 'Cliques da integração'}</h2>${isC ? '' : ''}</div>
+      ${isC ? `<ul>${d.top.map(x => `<li><a class="rel-ln" href="#campanha-detalhe" data-go="campanha-detalhe" data-state='${esc(JSON.stringify({ id: campId(x.n), name: x.n }))}'>${esc(x.n)}</a><b class="num">${f.n(x.v)}</b><span class="num subtle">${f.pct(x.v / d.clicks.v * 100)}</span><div class="bar c2"><i style="width:${(x.v / d.top[0].v * 100).toFixed(0)}%"></i></div></li>`).join('')}</ul>`
+      : `<p class="hint pad">Cliques nos links enviados pela API. Veja por pedido em <a class="link" href="#links" data-go="links">Cliques nos links</a>.</p>`}</div>
+  </div>
+  <div class="card acc rel-more-acc">
+    <button aria-expanded="false"><span><b class="h3">Detalhes do período</b><span class="hint">status um a um, canais completos e últimos disparos</span></span>${ico('chevd', 'sm')}</button>
+    <div class="pnl"><div><div class="stack rel-gap" style="padding:0 18px 18px">
+      <div class="rel-vals card">
+        <div>${tile({ label: 'Valor total', icon: 'wallet', v: v.total, prev: d.valPrev, kind: 'neutral', money: true, sub: v.prog > 0 ? 'inclui ' + f.brl(v.prog) + ' em andamento' : 'todos os envios' })}</div>
+        <div>${tile({ label: 'Valor cobrado', icon: 'check', v: v.charged, money: true, sub: 'envios com sucesso' })}</div>
+        <div>${tile({ label: 'Valor devolvido', icon: 'rel-undo', v: v.refunded, money: true, sub: 'falhas e cancelamentos' })}</div>
+      </div>
+      <div class="rel-g2">${groups.map(([g, h, ks]) => group(g, h, ks.map(t))).join('')}</div>
+      <div class="card"><div class="tc-head"><h3 class="h3">Canais por status</h3></div>
+        <div class="tbl-wrap"><table class="table rel-ctbl"><thead><tr><th>Canal</th><th class="r">Pré-fila</th><th class="r">Na fila</th><th class="r">Enviando</th><th class="r">Enviado</th><th class="r">Entregue</th><th class="r">Lida</th><th class="r">Falhou</th><th class="r">Cliques</th></tr></thead>
+        <tbody>${d.channels.map(c => `<tr><td>${chan(c.c)}</td>${[c.pre, c.queue, c.sending, c.sent, c.deliv, c.read, c.failed, c.clicks].map((n, i) => `<td class="rel-num">${i === 5 && c.c === 'SMS' ? none('n/a') : f.n(n)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>
+      <div class="card"><div class="tc-head"><h3 class="h3">Últimos disparos</h3><button class="btn ghost sm" data-go="relatorio-envios">Ver relatório completo${ico('chev', 'sm')}</button></div>
+        ${dispTable(dispatches(D.src).filter(x => D.ch === 'ALL' || x.channel === D.ch).slice(0, 6), D.src)}</div>
+    </div></div></div>
+  </div>`;
   hydrate(host);
   dashLine(d);
-  B.chart.bars($("#relDashChart"), { labels: d.channels.map(c => CHS[c.c]), series: [{ name: 'Enviado', values: d.channels.map(c => c.sent), color: 'var(--c1)' }, { name: 'Entregue', values: d.channels.map(c => c.deliv), color: 'var(--c3)' }, { name: 'Lida', values: d.channels.map(c => c.read), color: 'var(--c4)' }, { name: 'Falhou', values: d.channels.map(c => c.failed), color: 'var(--bad)' }], height: 250 });
+  B.chart.funnel($('#relDashFunnel'), { steps: steps.map(([label, value]) => ({ label, value })) });
   D.last = d;
 }
 function dashLine(d) {
