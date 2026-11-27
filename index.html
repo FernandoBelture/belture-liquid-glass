@@ -3568,13 +3568,7 @@ button.link{font:inherit;font-weight:600}
 <!-- ===================== Análise e gráficos ===================== -->
 <section class="view" id="v-dashboard" aria-labelledby="relDashT">
   <div class="stack rel-gap">
-    <div class="page-head">
-      <div class="txt">
-        <span class="eyebrow">Loja Aurora</span>
-        <h1 class="h1" id="relDashT" style="margin-top:6px">Boa tarde, Marina</h1>
-        <p id="relDashSub">Seus envios dos últimos 7 dias, comparados aos 7 dias anteriores.</p>
-      </div>
-    </div>
+    <h1 class="sr" id="relDashT">Análise e gráficos</h1>
 
     <div class="rel-bar" role="group" aria-label="Filtros da análise">
       <div class="seg" role="tablist" aria-label="Origem dos envios" id="relDashSrc">
@@ -9460,7 +9454,6 @@ function recentCamps() {
 }
 function dashRender() {
   const host = $('#relDashBody'), s = stOf('dashboard');
-  $('#relDashSub').textContent = `Seus envios ${D.src === 'api' ? 'via API' : 'de campanhas'} nos ${PER[D.per].lbl}${D.ch === 'ALL' ? '' : ', canal ' + CH[D.ch]}, comparados ao período anterior.`;
   if (s === 'loading') return host.innerHTML = skel(2);
   if (s === 'error') return host.innerHTML = errBox('Não foi possível carregar os números do período. Verifique a conexão e tente de novo.');
   if (s === 'empty') return host.innerHTML = `<div class="card">${emptyBox('Nenhum envio no período', 'Ainda não há envios com estes filtros. Amplie o período ou crie uma campanha para ver os números aqui.', `<button class="btn outline" data-rel-per="30d">Ver últimos 30 dias</button>`)}</div>`;
@@ -9476,14 +9469,14 @@ function dashRender() {
   const lineDefs = [...(isC ? CS : AS).map(([k, l]) => [k, l]), ['clicks', 'Cliques']];
   const sel = D.lines[D.src];
   host.innerHTML = `
-  <section class="rel-sec" aria-labelledby="relValT"><div class="rel-sh"><h2 class="h2" id="relValT">Valor dos envios</h2><span class="hint">Total = todos os envios × preço. Cobrado = enviados. Devolvido = falhas e cancelamentos.</span></div>
+  <section class="rel-sec" aria-labelledby="relValT"><div class="rel-sh"><h2 class="h2" id="relValT">Valor dos envios</h2></div>
     <div class="card rel-vals">
       <div class="v-total">${tile({ label: 'Valor total', icon: 'wallet', v: v.total, prev: d.valPrev, kind: 'neutral', money: true, big: true, sub: v.prog > 0 ? 'inclui ' + f.brl(v.prog) + ' em andamento' : 'todos os envios' })}</div>
       <div class="v-ok">${tile({ label: 'Valor cobrado', icon: 'check', v: v.charged, money: true, big: true, sub: 'envios realizados com sucesso' })}</div>
       <div class="v-back">${tile({ label: 'Valor devolvido', icon: 'rel-undo', v: v.refunded, money: true, big: true, sub: 'falhas e cancelamentos (não cobrados)' })}</div>
     </div></section>
-  <section class="rel-sec" aria-labelledby="relStT"><div class="rel-sh"><h2 class="h2" id="relStT">Envios por status</h2><span class="hint">Na ordem do fluxo. Valor em R$ abaixo de cada número.</span></div>
-    <div class="rel-g2">${groups.map(([g, h, ks, tone]) => group(g, h, ks.map(t), '', tone)).join('')}</div></section>
+  <section class="rel-sec" aria-labelledby="relStT"><div class="rel-sh"><h2 class="h2" id="relStT">Envios por status</h2></div>
+    <div class="rel-g2">${groups.map(([g, h, ks, tone]) => group(g, h, ks.map(t))).join('')}</div></section>
   <div class="grid-2">
     <div class="card chart-card"><div class="card-head"><h2 class="h2">Linha temporal</h2><span class="hint" style="margin-left:auto">${d.P.step === 'm' ? 'por mês' : d.P.step === 'w' ? 'por semana' : 'por dia'}</span></div>
       <div class="rel-lines" role="group" aria-label="Linhas do gráfico">${lineDefs.map(([k, l], i) => `<button class="chip" aria-pressed="${sel.has(k)}" data-v="${k}"><i style="background:${LINE_COLOR[k] || ['var(--c5)', 'var(--c6)', 'var(--c3)'][i % 3]}"></i>${esc(l)}</button>`).join('')}</div>
@@ -9786,8 +9779,6 @@ function crmRender() {
 B.view('dashboard', {
   title: 'Análise e gráficos', primary: { label: 'Nova campanha', icon: 'plus', go: 'campanha-nova' },
   init(el) {
-    const hr = new Date().getHours();
-    $('#relDashT').textContent = (hr < 12 ? 'Bom dia' : hr < 18 ? 'Boa tarde' : 'Boa noite') + ', Marina';
     D.src = $('#relDashSrc [aria-selected="true"]').dataset.v; D.per = $('#relDashPer').value; D.ch = $('#relDashCh').value;
     $('#relDashSrc').addEventListener('bel:seg', e => { D.src = e.detail; dashSoon(); });
     $('#relDashPer').addEventListener('change', e => { D.per = e.target.value; dashSoon(); });
