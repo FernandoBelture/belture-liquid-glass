@@ -28,6 +28,8 @@
   --scrim:rgba(15,15,22,.3);
   --av-1:#e3e1fb; --av-2:#fbe1ee; --av-3:#dcefe6; --av-4:#fbecd6; --av-5:#dde8fb; --av-ink:#2c2a5e;
   --c1:#5b55a3; --c2:#c0508f; --c3:#2c64b5; --c4:#147a52; --c5:#b9791a; --c6:#8f8bd0;   /* séries de gráfico */
+  /* cores de status: uma por status, iguais à dashboard do painel (educação visual: a cor diz o que é) */
+  --t-amber:#b45309; --t-violet:#7c3aed; --t-emerald:#059669; --t-sky:#0284c7; --t-indigo:#4f46e5; --t-orange:#ea580c; --t-blue:#2563eb; --t-rose:#e11d48; --t-slate:#64748b;
   --r-shell:28px; --pad-shell:10px; --r-item:18px; --r-card:22px; --r-field:12px;
   --hit:40px; --hit-touch:44px; --sb-w:272px;
   --spring:linear(0,.06 3%,.22 7%,.52 13%,.8 20%,.98 28%,1.04 35%,1.05 40%,1.03 50%,1.005 62%,.998 75%,1);
@@ -46,6 +48,7 @@
   --fill:rgba(255,255,255,.06); --fill-2:rgba(255,255,255,.11); --scrim:rgba(0,0,0,.5);
   --av-1:#2e2c6e; --av-2:#4a2547; --av-3:#1d4638; --av-4:#4a3a1c; --av-5:#22355e; --av-ink:#f2f1ff;
   --c1:#a7a2f0; --c2:#e58fb8; --c3:#7aa9f2; --c4:#4cc995; --c5:#e7a94a; --c6:#6e69c0;
+  --t-amber:#fbbf24; --t-violet:#a78bfa; --t-emerald:#34d399; --t-sky:#38bdf8; --t-indigo:#818cf8; --t-orange:#fb923c; --t-blue:#60a5fa; --t-rose:#fb7185; --t-slate:#94a3b8;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --brand-ink:#cecdf7; --ring:#cecdf7; --brand-soft:#3b3884;
@@ -58,6 +61,7 @@
   --fill:rgba(255,255,255,.06); --fill-2:rgba(255,255,255,.11); --scrim:rgba(0,0,0,.5);
   --av-1:#2e2c6e; --av-2:#4a2547; --av-3:#1d4638; --av-4:#4a3a1c; --av-5:#22355e; --av-ink:#f2f1ff;
   --c1:#a7a2f0; --c2:#e58fb8; --c3:#7aa9f2; --c4:#4cc995; --c5:#e7a94a; --c6:#6e69c0;
+  --t-amber:#fbbf24; --t-violet:#a78bfa; --t-emerald:#34d399; --t-sky:#38bdf8; --t-indigo:#818cf8; --t-orange:#fb923c; --t-blue:#60a5fa; --t-rose:#fb7185; --t-slate:#94a3b8;
   color-scheme:dark}
 
 *{box-sizing:border-box;margin:0}
@@ -155,6 +159,9 @@ select.select{-webkit-appearance:none;appearance:none;padding-right:38px;cursor:
 .badge.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
 .badge.info{color:var(--info);background:color-mix(in srgb,var(--info) 11%,transparent)}
 .badge.neutral{color:var(--ink-2);background:var(--fill)}
+.tone-amber{--tone:var(--t-amber)} .tone-violet{--tone:var(--t-violet)} .tone-emerald{--tone:var(--t-emerald)} .tone-sky{--tone:var(--t-sky)} .tone-indigo{--tone:var(--t-indigo)}
+.tone-orange{--tone:var(--t-orange)} .tone-blue{--tone:var(--t-blue)} .tone-rose{--tone:var(--t-rose)} .tone-slate{--tone:var(--t-slate)}
+.badge[class*="tone-"]{color:var(--tone);background:color-mix(in srgb,var(--tone) 12%,transparent)}
 .badge.live::before{animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35;transform:scale(1.4)}}
 .chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);font-weight:530;color:var(--ink-2);white-space:nowrap;transition:background var(--t1),color var(--t1)}
@@ -984,6 +991,9 @@ h1[tabindex="-1"]:focus{outline:none}
 .rel-grp .rel-tv.big{font-size:26px}
 .rel-vals .v-total{--tone:var(--brand-ink)} .rel-vals .v-ok{--tone:var(--ok)} .rel-vals .v-back{--tone:var(--c5)}
 .rel-vals>div .rel-tv,.rel-vals>div .rel-tl svg{color:var(--tone)}
+
+/* número e ícone na cor do status */
+.rel-tile[class*="tone-"] .rel-tv,.rel-tile[class*="tone-"] .rel-tl svg{color:var(--tone)}
 
 </style>
 <style>/* área: campanhas */
@@ -9285,7 +9295,18 @@ addEventListener('scroll', () => { if (openPop) closePop(true); }, { passive: tr
 addEventListener('bel:theme', syncChrome);
 
 /* ---------------- API pública para as telas ---------------- */
-window.Bel = { $, $$, esc, ico, fmt, view, go, state, toast, has, plan: sim, gateHTML, sound: Sound, open: openOverlay, close: closeAll, chart, countUp, selectable, confetti, placeSeg, reduced, NAV_INDEX, syncChrome, toggleTheme };
+/* Cor por status, a mesma em todas as telas (dashboard real: dashboard-temporal-chart-helpers.ts e DispatchStatusMetricTile.tsx).
+   âmbar = aguardando, violeta = link curto, verde = pronto ou sucesso, azul-céu = na fila ou agendado, índigo = enviando ou em execução,
+   laranja = aguardando terceiros ou com falhas, azul = lido e cliques, rosa = falha, cinza = cancelado ou rascunho. */
+const TONE = {
+  pending: 'amber', pending_shortlink: 'violet', pending_dispatch_ready: 'emerald', queued: 'sky', sending: 'indigo', awaiting_provider_status: 'orange',
+  sent: 'emerald', delivered: 'emerald', read: 'blue', failed: 'rose', shortlink_failed_pending: 'rose', cancelled: 'slate', clicks: 'blue',
+  PENDING: 'amber', BILLING_REJECTED: 'rose', READY_TO_SEND: 'sky', QUEUED_FOR_PROVIDER: 'violet', PROVIDER_ACCEPTED: 'sky', FINAL_SUCCESS: 'emerald', PROVIDER_FAILED: 'rose', FINAL_FAILED: 'rose',
+  SUCCESS: 'emerald', FAILED: 'rose',
+  DRAFT: 'slate', SCHEDULED: 'sky', READY_TO_DISPATCH: 'emerald', RUNNING: 'indigo', COMPLETED: 'emerald', COMPLETED_WITH_FAILURES: 'orange', CANCELLED: 'slate', PAUSED: 'amber',
+};
+const tone = k => TONE[k] || 'slate';
+window.Bel = { $, $$, esc, ico, fmt, view, go, state, toast, has, plan: sim, gateHTML, tone, toneVar: k => `var(--t-${tone(k)})`, sound: Sound, open: openOverlay, close: closeAll, chart, countUp, selectable, confetti, placeSeg, reduced, NAV_INDEX, syncChrome, toggleTheme };
 window.addEventListener('DOMContentLoaded', () => { mountShell(); $$('.sheet,.dialog,.palette').forEach(o => o.setAttribute('inert', '')); route(); });
 })();
 
@@ -9336,9 +9357,9 @@ function delta(cur, prev, kind = 'vol') {
   const cls = kind === 'fail' ? (up ? 'dn' : 'up') : kind === 'vol' ? (up ? 'up' : 'flat') : 'flat';
   return `<span class="delta ${cls}" title="Em relação ao período anterior">${ico(up ? 'up' : 'down')}${f.pct(Math.abs(p))}<span class="sr"> ${up ? 'a mais' : 'a menos'} que o período anterior</span></span>`;
 }
-function tile({ label, icon, v, prev, kind = 'vol', sub, spark, money, pct, color, live, big }) {
+function tile({ label, icon, v, prev, kind = 'vol', sub, spark, money, pct, color, live, big, tone }) {
   const shown = money ? f.brl(v) : pct ? f.pct(v) : f.n(v);
-  return `<div class="rel-tile"><div class="rel-tl">${icon ? ico(icon, 'sm') : ''}<span${live ? ' class="rel-live"' : ''}>${esc(label)}</span></div>
+  return `<div class="rel-tile${tone ? ' tone-' + tone : ''}"><div class="rel-tl">${icon ? ico(icon, 'sm') : ''}<span${live ? ' class="rel-live"' : ''}>${esc(label)}</span></div>
     <div class="rel-tv num${big ? ' big' : ''}" data-count="${v}"${money ? ' data-prefix="R$ " data-dec="2"' : pct ? ' data-suffix="%" data-dec="1"' : ''}>${shown}</div>
     <div class="rel-ts">${sub ? `<span>${sub}</span>` : ''}${prev != null ? delta(v, prev, kind) : ''}</div>
     ${spark ? `<div class="rel-spk" data-spark="${spark.join(',')}" data-color="${color || 'var(--c1)'}"></div>` : ''}</div>`;
@@ -9390,7 +9411,7 @@ function dispatches(src) {
   }
   return (DISP[src] = rows);
 }
-const ST_BADGE = { SUCCESS: ['ok', 'Sucesso'], FAILED: ['bad', 'Falha'], PENDING: ['warn', 'Pendente'] };
+const ST_BADGE = { SUCCESS: ['tone-emerald', 'Sucesso'], FAILED: ['tone-rose', 'Falha'], PENDING: ['tone-amber', 'Pendente'] };
 const stBadge = s => `<span class="badge ${ST_BADGE[s][0]}">${ST_BADGE[s][1]}</span>`;
 const DROW = {};
 function dispTable(rows, src, key, per, total) {
@@ -9422,7 +9443,7 @@ const AS = [ // status da integração
   ['PENDING', 'Pendente', 'history', 210], ['BILLING_REJECTED', 'Billing recusado', 'wallet', 38], ['READY_TO_SEND', 'Pronto p/ envio', 'zap', 160], ['QUEUED_FOR_PROVIDER', 'Fila do provedor', 'list', 420],
   ['PROVIDER_ACCEPTED', 'Aceito', 'send', 1260], ['FINAL_SUCCESS', 'Concluído', 'check', 17840], ['PROVIDER_FAILED', 'Falha provedor', 'alert', 142], ['FINAL_FAILED', 'Falhou', 'x', 265]];
 const FAILS = new Set(['failed', 'shortlink_failed_pending', 'cancelled', 'BILLING_REJECTED', 'PROVIDER_FAILED', 'FINAL_FAILED']);
-const LINE_COLOR = { sent: 'var(--c1)', delivered: 'var(--c3)', read: 'var(--c4)', failed: 'var(--bad)', clicks: 'var(--c2)', queued: 'var(--c6)', pending: 'var(--c5)', FINAL_SUCCESS: 'var(--c1)', FINAL_FAILED: 'var(--bad)', PROVIDER_ACCEPTED: 'var(--c3)', PENDING: 'var(--c5)' };
+const LINE_COLOR = new Proxy({}, { get: (_, k) => B.toneVar(k) });   // mesma cor do status em número, ícone, linha e legenda
 const D = { src: 'campaign', per: '7d', ch: 'ALL', lines: { campaign: new Set(['sent', 'failed', 'clicks']), api: new Set(['FINAL_SUCCESS', 'FINAL_FAILED', 'clicks']) }, hideAttn: {} };
 const PRICE = { campaign: .12, api: .09 };
 function dashData() {
@@ -9444,7 +9465,7 @@ function dashData() {
 /* Cor por grupo de status, nos números e ícones: Preparação âmbar, Em trânsito azul, Resultado verde, Não enviados vermelho.
    Valores: total na cor da marca, cobrado em verde, devolvido em âmbar. */
 const RECENT = ['Black Friday VIP', 'Carrinho abandonado novembro', 'Lançamento coleção verão', 'Cashback de dezembro', 'Reativação 90 dias', 'Frete grátis fim de semana'];
-const RST = [['ok', 'Em execução', 1], ['ok', 'Concluída'], ['ok', 'Concluída'], ['info', 'Agendada'], ['warn', 'Concluída com falhas'], ['ok', 'Concluída']];
+const RST = [['tone-indigo', 'Em execução', 1], ['tone-emerald', 'Concluída'], ['tone-emerald', 'Concluída'], ['tone-sky', 'Agendada'], ['tone-orange', 'Concluída com falhas'], ['tone-emerald', 'Concluída']];
 function recentCamps() {
   return `<div class="tbl-wrap"><table class="table"><thead><tr><th>Campanha</th><th>Status</th><th>Canal</th><th class="r">Enviados</th><th class="r">Entrega</th><th class="r">Cliques</th><th class="r">Valor</th><th>Disparo</th></tr></thead><tbody>
   ${RECENT.map((n, i) => { const r = rnd(hash(n)), sent = Math.round(2000 + r() * 46000), sch = RST[i][1] === 'Agendada', ch = CHK[Math.floor(r() * CHK.length)], d = new Date(NOW - (i * 1.3 + r()) * 864e5 * (sch ? -1 : 1));
@@ -9458,7 +9479,7 @@ function dashRender() {
   if (s === 'error') return host.innerHTML = errBox('Não foi possível carregar os números do período. Verifique a conexão e tente de novo.');
   if (s === 'empty') return host.innerHTML = `<div class="card">${emptyBox('Nenhum envio no período', 'Ainda não há envios com estes filtros. Amplie o período ou crie uma campanha para ver os números aqui.', `<button class="btn outline" data-rel-per="30d">Ver últimos 30 dias</button>`)}</div>`;
   const d = dashData(), isC = D.src === 'campaign', by = d.by;
-  const t = k => { const x = by[k]; return tile({ label: x.label, icon: x.icon, v: x.v, prev: x.prev, kind: FAILS.has(x.key) ? 'fail' : 'vol', sub: f.brl(x.v * PRICE[D.src]), big: true }); };
+  const t = k => { const x = by[k]; return tile({ label: x.label, icon: x.icon, v: x.v, prev: x.prev, kind: FAILS.has(x.key) ? 'fail' : 'vol', sub: f.brl(x.v * PRICE[D.src]), big: true, tone: B.tone(x.key) }); };
   const groups = isC ? [
     ['Preparação', 'encurtamento e pré-fila', ['pending', 'pending_shortlink', 'pending_dispatch_ready'], 't-prep'],
     ['Em trânsito', 'na fila e na operadora', ['queued', 'sending', 'awaiting_provider_status'], 't-move'],
@@ -9482,11 +9503,11 @@ function dashRender() {
       <div class="rel-lines" role="group" aria-label="Linhas do gráfico">${lineDefs.map(([k, l], i) => `<button class="chip" aria-pressed="${sel.has(k)}" data-v="${k}"><i style="background:${LINE_COLOR[k] || ['var(--c5)', 'var(--c6)', 'var(--c3)'][i % 3]}"></i>${esc(l)}</button>`).join('')}</div>
       <div id="relDashLine"></div></div>
     <div class="card rel-eng"><h2 class="h2">Engajamento</h2>
-      ${tile({ label: 'Total de cliques', icon: 'rel-click', v: d.clicks.v, prev: d.clicks.prev, big: true, sub: f.pct(ctr) + ' dos enviados clicaram', spark: d.clicks.series, color: 'var(--c2)' })}
-      ${isC ? `<div><span class="eyebrow">Top 3 campanhas (cliques)</span><ol class="rel-top" style="margin-top:8px">${d.top.map((x, i) => `<li><span class="n">${i + 1}.</span><a href="#campanha-detalhe" data-go="campanha-detalhe" data-state='${esc(JSON.stringify({ id: campId(x.n), name: x.n }))}'>${esc(x.n)}${ico('rel-ext', 'sm')}</a><b class="num">${f.n(x.v)}</b><div class="bar"><i style="width:${(x.v / d.top[0].v * 100).toFixed(0)}%;background:var(--c2)"></i></div></li>`).join('')}</ol></div>` : `<p class="hint">Cliques nos links encurtados enviados pela integração. Para ver por pedido, abra o <a class="link" href="#links" data-go="links">relatório de links</a>.</p>`}
+      ${tile({ label: 'Total de cliques', icon: 'rel-click', v: d.clicks.v, prev: d.clicks.prev, big: true, sub: f.pct(ctr) + ' dos enviados clicaram', spark: d.clicks.series, color: 'var(--t-blue)', tone: 'blue' })}
+      ${isC ? `<div><span class="eyebrow">Top 3 campanhas (cliques)</span><ol class="rel-top" style="margin-top:8px">${d.top.map((x, i) => `<li><span class="n">${i + 1}.</span><a href="#campanha-detalhe" data-go="campanha-detalhe" data-state='${esc(JSON.stringify({ id: campId(x.n), name: x.n }))}'>${esc(x.n)}${ico('rel-ext', 'sm')}</a><b class="num">${f.n(x.v)}</b><div class="bar"><i style="width:${(x.v / d.top[0].v * 100).toFixed(0)}%;background:var(--t-blue)"></i></div></li>`).join('')}</ol></div>` : `<p class="hint">Cliques nos links encurtados enviados pela integração. Para ver por pedido, abra o <a class="link" href="#links" data-go="links">relatório de links</a>.</p>`}
     </div>
   </div>
-  <div class="card"><div class="tc-head"><h2 class="h2">Canais</h2><div class="legend"><span><i style="background:var(--c1)"></i>Enviado</span><span><i style="background:var(--c3)"></i>Entregue</span><span><i style="background:var(--c4)"></i>Lida</span><span><i style="background:var(--bad)"></i>Falhou</span></div></div>
+  <div class="card"><div class="tc-head"><h2 class="h2">Canais</h2><div class="legend"><span><i style="background:var(--t-emerald)"></i>Enviado</span><span><i style="background:var(--t-sky)"></i>Entregue</span><span><i style="background:var(--t-blue)"></i>Lida</span><span><i style="background:var(--t-rose)"></i>Falhou</span></div></div>
     <div class="rel-chan"><div id="relDashChart"></div>
       <div class="tbl-wrap"><table class="table rel-ctbl"><thead><tr><th>Canal</th><th class="r">Pré-fila</th><th class="r">Na fila</th><th class="r">Enviando</th><th class="r">Enviado</th><th class="r">Entregue</th><th class="r">Lida</th><th class="r">Falhou</th><th class="r">Cliques</th></tr></thead>
       <tbody>${d.channels.map(c => `<tr><td>${chan(c.c)}</td>${[c.pre, c.queue, c.sending, c.sent, c.deliv, c.read, c.failed, c.clicks].map((n, i) => `<td class="rel-num">${i === 5 && c.c === 'SMS' ? none('n/a') : f.n(n)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></div>
@@ -9495,7 +9516,7 @@ function dashRender() {
     ${dispTable(dispatches(D.src).filter(x => D.ch === 'ALL' || x.channel === D.ch).slice(0, 6), D.src)}</div>`}`;
   hydrate(host);
   dashLine(d);
-  B.chart.bars($("#relDashChart"), { labels: d.channels.map(c => CHS[c.c]), series: [{ name: 'Enviado', values: d.channels.map(c => c.sent), color: 'var(--c1)' }, { name: 'Entregue', values: d.channels.map(c => c.deliv), color: 'var(--c3)' }, { name: 'Lida', values: d.channels.map(c => c.read), color: 'var(--c4)' }, { name: 'Falhou', values: d.channels.map(c => c.failed), color: 'var(--bad)' }], height: 250 });
+  B.chart.bars($("#relDashChart"), { labels: d.channels.map(c => CHS[c.c]), series: [{ name: 'Enviado', values: d.channels.map(c => c.sent), color: 'var(--t-emerald)' }, { name: 'Entregue', values: d.channels.map(c => c.deliv), color: 'var(--t-sky)' }, { name: 'Lida', values: d.channels.map(c => c.read), color: 'var(--t-blue)' }, { name: 'Falhou', values: d.channels.map(c => c.failed), color: 'var(--t-rose)' }], height: 250 });
   D.last = d;
 }
 function dashLine(d) {
@@ -9958,9 +9979,9 @@ const CH = {
   EMAIL: { l: 'Email', i: 'mail', u: .02 }, WEBPUSH: { l: 'WebPush', i: 'bell', u: .01 },
 };
 const ST = {
-  DRAFT: ['neutral', 'Rascunho'], SCHEDULED: ['info', 'Agendada'], RUNNING: ['ok', 'Em execução', 1], COMPLETED: ['ok', 'Concluída'],
-  COMPLETED_WITH_FAILURES: ['warn', 'Concluída com falhas'], FAILED: ['bad', 'Falhou'], CANCELLED: ['neutral', 'Cancelada'],
-  READY_TO_DISPATCH: ['info', 'Pronto para disparo'], PAUSED: ['warn', 'Pausada'],
+  DRAFT: ['tone-slate', 'Rascunho'], SCHEDULED: ['tone-sky', 'Agendada'], RUNNING: ['tone-indigo', 'Em execução', 1], COMPLETED: ['tone-emerald', 'Concluída'],
+  COMPLETED_WITH_FAILURES: ['tone-orange', 'Concluída com falhas'], FAILED: ['tone-rose', 'Falhou'], CANCELLED: ['tone-slate', 'Cancelada'],
+  READY_TO_DISPATCH: ['tone-emerald', 'Pronto para disparo'], PAUSED: ['tone-amber', 'Pausada'],
 };
 const stBadge = s => badge(ST[s][0], ST[s][1], ST[s][2]);
 const KIND = { NORMAL: 'Normal', KYC: 'KYC', CONSULTA: 'Consulta' };
@@ -10041,7 +10062,7 @@ function renderList() {
 }
 function renderSummary() {
   const n = s => CAMPS.filter(c => s.includes(c.status)).length;
-  const items = [['RUNNING', 'Em execução', 'var(--ok)', ['RUNNING']], ['SCHEDULED', 'Agendadas', 'var(--info)', ['SCHEDULED', 'READY_TO_DISPATCH']], ['COMPLETED_WITH_FAILURES', 'Com falhas', 'var(--warn)', ['COMPLETED_WITH_FAILURES', 'FAILED']], ['DRAFT', 'Rascunhos', 'var(--ink-3)', ['DRAFT']], ['PAUSED', 'Pausadas', 'var(--warn)', ['PAUSED']]];
+  const items = [['RUNNING', 'Em execução', 'var(--t-indigo)', ['RUNNING']], ['SCHEDULED', 'Agendadas', 'var(--t-sky)', ['SCHEDULED', 'READY_TO_DISPATCH']], ['COMPLETED_WITH_FAILURES', 'Com falhas', 'var(--t-orange)', ['COMPLETED_WITH_FAILURES', 'FAILED']], ['DRAFT', 'Rascunhos', 'var(--t-slate)', ['DRAFT']], ['PAUSED', 'Pausadas', 'var(--t-amber)', ['PAUSED']]];
   $('#cmpSummary').innerHTML = items.map(([v, l, c, s]) => `<button class="sumi" data-sum="${v}" aria-pressed="${L.st === v}"><i class="dotc" style="color:${c}"></i><b>${n(s)}</b><span>${l}</span></button>`).join('');
 }
 function renderKpis() {
