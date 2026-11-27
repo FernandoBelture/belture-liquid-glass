@@ -17,15 +17,15 @@
 :root{
   --brand:#5b55a3; --brand-ink:#5b55a3; --brand-2:#7b76b8; --brand-soft:#cecdf7; --brand-deep:#1e1e56; --ring:#5b55a3;
   --ok:#147a52; --warn:#9a5f0a; --bad:#b83232; --on-bad:#ffffff; --info:#2c64b5; --pink:#c0508f;
-  --bg:#f4f3fd; --ink:#161531; --ink-2:#4f4b7d; --ink-3:#6e6a9c;
-  --card:#ffffff; --card-2:#f9f8ff; --line:#e4e2f6; --line-2:#efeefa;
-  --field:#ffffff; --field-line:#d9d6f1;
+  --bg:#f6f6f8; --ink:#17171f; --ink-2:#4b4b5c; --ink-3:#6a6a7c;
+  --card:#ffffff; --card-2:#fafafb; --line:#e5e5ea; --line-2:#efeff2;
+  --field:#ffffff; --field-line:#d6d6de;
   --dot:rgba(91,85,163,.16);
   --glass-s:rgba(255,255,255,.52); --glass-l:rgba(255,255,255,.68);
-  --glass-rim:rgba(255,255,255,.9); --glass-rim-2:rgba(255,255,255,.25); --glass-edge:rgba(91,85,163,.12);
-  --glass-shadow:0 10px 30px -12px rgba(30,30,86,.26),0 2px 6px -2px rgba(30,30,86,.08);
-  --fill:rgba(91,85,163,.08); --fill-2:rgba(91,85,163,.14);
-  --scrim:rgba(22,21,49,.3);
+  --glass-rim:rgba(255,255,255,.9); --glass-rim-2:rgba(255,255,255,.25); --glass-edge:rgba(20,20,30,.08);
+  --glass-shadow:0 10px 30px -14px rgba(20,20,30,.22),0 2px 6px -2px rgba(20,20,30,.06);
+  --fill:rgba(20,20,30,.05); --fill-2:rgba(20,20,30,.09);
+  --scrim:rgba(15,15,22,.3);
   --av-1:#e3e1fb; --av-2:#fbe1ee; --av-3:#dcefe6; --av-4:#fbecd6; --av-5:#dde8fb; --av-ink:#2c2a5e;
   --c1:#5b55a3; --c2:#c0508f; --c3:#2c64b5; --c4:#147a52; --c5:#b9791a; --c6:#8f8bd0;   /* séries de gráfico */
   --r-shell:28px; --pad-shell:10px; --r-item:18px; --r-card:22px; --r-field:12px;
@@ -38,24 +38,24 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --brand-ink:#cecdf7; --ring:#cecdf7; --brand-soft:#3b3884;
   --ok:#4cc995; --warn:#e7a94a; --bad:#f07373; --on-bad:#2a0b10; --info:#7aa9f2; --pink:#e58fb8;
-  --bg:#0f0f2e; --ink:#f2f1ff; --ink-2:#c3c0ea; --ink-3:#9a97c9;
-  --card:#17174a; --card-2:#1b1b52; --line:#2b2b69; --line-2:#22225a; --field:#14143f; --field-line:#34347c;
+  --bg:#0d0d12; --ink:#f3f3f6; --ink-2:#c4c4ce; --ink-3:#90909e;
+  --card:#16161d; --card-2:#1b1b23; --line:#2a2a34; --line-2:#202029; --field:#121218; --field-line:#34343f;
   --dot:rgba(206,205,247,.09);
-  --glass-s:rgba(30,30,86,.46); --glass-l:rgba(26,26,74,.62); --glass-rim:rgba(206,205,247,.34); --glass-rim-2:rgba(206,205,247,.06); --glass-edge:rgba(0,0,0,.25);
+  --glass-s:rgba(30,30,38,.55); --glass-l:rgba(24,24,31,.72); --glass-rim:rgba(255,255,255,.14); --glass-rim-2:rgba(255,255,255,.04); --glass-edge:rgba(0,0,0,.3);
   --glass-shadow:0 14px 36px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.4);
-  --fill:rgba(206,205,247,.10); --fill-2:rgba(206,205,247,.18); --scrim:rgba(0,0,0,.45);
+  --fill:rgba(255,255,255,.06); --fill-2:rgba(255,255,255,.11); --scrim:rgba(0,0,0,.5);
   --av-1:#2e2c6e; --av-2:#4a2547; --av-3:#1d4638; --av-4:#4a3a1c; --av-5:#22355e; --av-ink:#f2f1ff;
   --c1:#a7a2f0; --c2:#e58fb8; --c3:#7aa9f2; --c4:#4cc995; --c5:#e7a94a; --c6:#6e69c0;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --brand-ink:#cecdf7; --ring:#cecdf7; --brand-soft:#3b3884;
   --ok:#4cc995; --warn:#e7a94a; --bad:#f07373; --on-bad:#2a0b10; --info:#7aa9f2; --pink:#e58fb8;
-  --bg:#0f0f2e; --ink:#f2f1ff; --ink-2:#c3c0ea; --ink-3:#9a97c9;
-  --card:#17174a; --card-2:#1b1b52; --line:#2b2b69; --line-2:#22225a; --field:#14143f; --field-line:#34347c;
+  --bg:#0d0d12; --ink:#f3f3f6; --ink-2:#c4c4ce; --ink-3:#90909e;
+  --card:#16161d; --card-2:#1b1b23; --line:#2a2a34; --line-2:#202029; --field:#121218; --field-line:#34343f;
   --dot:rgba(206,205,247,.09);
-  --glass-s:rgba(30,30,86,.46); --glass-l:rgba(26,26,74,.62); --glass-rim:rgba(206,205,247,.34); --glass-rim-2:rgba(206,205,247,.06); --glass-edge:rgba(0,0,0,.25);
+  --glass-s:rgba(30,30,38,.55); --glass-l:rgba(24,24,31,.72); --glass-rim:rgba(255,255,255,.14); --glass-rim-2:rgba(255,255,255,.04); --glass-edge:rgba(0,0,0,.3);
   --glass-shadow:0 14px 36px -14px rgba(0,0,0,.65),0 2px 6px -2px rgba(0,0,0,.4);
-  --fill:rgba(206,205,247,.10); --fill-2:rgba(206,205,247,.18); --scrim:rgba(0,0,0,.45);
+  --fill:rgba(255,255,255,.06); --fill-2:rgba(255,255,255,.11); --scrim:rgba(0,0,0,.5);
   --av-1:#2e2c6e; --av-2:#4a2547; --av-3:#1d4638; --av-4:#4a3a1c; --av-5:#22355e; --av-ink:#f2f1ff;
   --c1:#a7a2f0; --c2:#e58fb8; --c3:#7aa9f2; --c4:#4cc995; --c5:#e7a94a; --c6:#6e69c0;
   color-scheme:dark}
@@ -81,25 +81,8 @@ svg.i.sm{width:16px;height:16px} svg.i.lg{width:22px;height:22px}
 .eyebrow{font:600 11px/1 var(--font);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
 .hint{font-size:12px;color:var(--ink-3)} .hint.err{color:var(--bad)}
 
-/* @fundo-ini: véu de cor da v1 (aurora). Único gradiente permitido, aprovado pelo dono; build.py ignora este bloco */
-@property --a1 { syntax:'<percentage>'; inherits:false; initial-value:18% }
-@property --a2 { syntax:'<percentage>'; inherits:false; initial-value:82% }
-@property --a3 { syntax:'<percentage>'; inherits:false; initial-value:60% }
-.backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--bg)}
-.backdrop::before{content:"";position:absolute;inset:-20%;
-  background:
-    radial-gradient(38% 42% at var(--a1) 22%, color-mix(in srgb,var(--brand) 42%,transparent), transparent 70%),
-    radial-gradient(34% 40% at var(--a2) 30%, color-mix(in srgb,var(--brand-2) 30%,transparent), transparent 70%),
-    radial-gradient(44% 46% at var(--a3) 92%, color-mix(in srgb,var(--brand-soft) 70%,transparent), transparent 72%),
-    radial-gradient(30% 34% at 8% 88%, color-mix(in srgb,var(--pink) 18%,transparent), transparent 70%);
-  filter:blur(30px) saturate(115%);
-  animation:aurora 44s ease-in-out infinite alternate}
-.backdrop::after{content:"";position:absolute;inset:0;opacity:.35;mix-blend-mode:soft-light;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
-@keyframes aurora{0%{--a1:12%;--a2:86%;--a3:58%}50%{--a1:34%;--a2:64%;--a3:30%}100%{--a1:22%;--a2:92%;--a3:74%}}
-.paused .backdrop::before{animation-play-state:paused}
-@media (prefers-reduced-motion:reduce){.backdrop::before{animation:none}}
-/* @fundo-fim */
+/* fundo neutro e liso, como painéis de Stripe e Cloudflare: a cor da marca fica nos dados e nas ações */
+.backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--bg)}
 
 /* ---------- material ---------- */
 .glass{position:relative;background:var(--glass-s);
@@ -288,7 +271,13 @@ tr:hover .rowact,tr:focus-within .rowact{opacity:1}
 .sb-nav{flex:1;overflow:auto;scrollbar-width:none;margin:0 -2px;padding:2px}
 .sb-nav::-webkit-scrollbar{display:none}
 .sb-group{margin-top:12px}
-.sb-group>.eyebrow{display:block;padding:4px 12px 6px}
+.sb-gh{display:flex;align-items:center;width:100%;gap:6px;padding:6px 12px;border-radius:10px;font:600 11px/1 var(--font);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);text-align:left}
+.sb-gh:hover{color:var(--ink);background:var(--fill)}
+.sb-gh span{flex:1}
+.sb-gh svg{transition:transform var(--t2) var(--spring)}
+.sb-gh[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.sb-items{display:grid;gap:2px;margin-top:2px}
+.sb-items[hidden]{display:none}
 .nav-item{display:flex;align-items:center;gap:11px;width:100%;height:38px;padding:0 12px;border-radius:var(--r-item);color:var(--ink-2);font-weight:520;text-decoration:none;transition:background var(--t1),color var(--t1)}
 .nav-item:hover{background:var(--fill);color:var(--ink)}
 .nav-item[aria-current="page"]{background:var(--card);color:var(--brand-ink);box-shadow:0 1px 2px rgba(22,21,49,.08),0 0 0 1px var(--line)}
@@ -300,9 +289,10 @@ tr:hover .rowact,tr:focus-within .rowact{opacity:1}
 .sb-foot .who{min-width:0;flex:1;line-height:1.25}
 .sb-foot .who b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sb-foot .who span{font-size:12px;color:var(--ink-3)}
-.app.collapsed :is(.ws .t,.ws>svg,.sb-search span,.sb-search .kbd,.sb-group>.eyebrow,.nav-item span,.nav-item .count,.nav-item .lock,.sb-foot .who,.sb-foot .btn){display:none}
+.app.collapsed :is(.ws .t,.ws>svg,.sb-search span,.sb-search .kbd,.sb-gh,.nav-item span,.nav-item .count,.nav-item .lock,.sb-foot .who,.sb-foot .btn){display:none}
 .app.collapsed :is(.nav-item,.sb-search,.ws){justify-content:center;padding:0}
 .app.collapsed .sb-group{margin-top:8px}
+.app.collapsed .sb-items[hidden]{display:grid}
 
 .main{min-width:0;display:flex;flex-direction:column}
 /* topo flutua como a sidebar (margem 12px, mesmo raio) e leva junto a faixa de fatura vencida; o vidro só aparece rolando */
@@ -404,8 +394,6 @@ tr:hover .rowact,tr:focus-within .rowact{opacity:1}
   .overdue .od-txt p,.overdue .od-see,.overdue .od-tog,.overdue .od-short{display:none}
   .overdue .btn{height:36px;padding:0 14px}
   .overdue .od-pay .l{display:none}.overdue .od-pay .s{display:inline}}
-.crumbs{display:flex;align-items:center;gap:6px;color:var(--ink-3);font-weight:520;min-width:0;white-space:nowrap}
-.crumbs b{color:var(--ink);font-weight:620;overflow:hidden;text-overflow:ellipsis}
 .topbar .spacer{flex:1}
 .cmdk{display:flex;align-items:center;gap:8px;height:40px;width:min(300px,30vw);padding:0 8px 0 14px;border-radius:999px;color:var(--ink-3)}
 .cmdk .kbd{margin-left:auto}
@@ -421,7 +409,7 @@ tr:hover .rowact,tr:focus-within .rowact{opacity:1}
 .tabbar{display:none}
 @media (max-width:900px){
   .app{grid-template-columns:minmax(0,1fr)}
-  .sidebar,.cmdk,.crumbs,.topbar .primary{display:none}
+  .sidebar,.cmdk,.topbar .primary{display:none}
   .topbar{padding:6px 6px 6px 14px}
   .topbar .mlogo{display:block}
   .topbar .btn.icon,.cluster .btn.icon{min-width:var(--hit-touch);min-height:var(--hit-touch)}
@@ -8693,25 +8681,25 @@ function sidebarHTML() {
   <button class="ws" aria-haspopup="menu" aria-controls="pop-ws" aria-expanded="false"><span class="av">LA</span><span class="t"><b>Loja Aurora</b><span id="wsSub">Empresa · Plano Pro</span></span>${ico('chevd', 'sm')}</button>
   <button class="sb-search" data-palette>${ico('search', 'sm')}<span>Buscar telas e ações</span><span class="kbd">⌘K</span></button>
   <nav class="sb-nav" aria-label="Menu principal">
-    ${NAV.map((gr, gi) => `<div class="sb-group" data-group="${esc(gr.g)}">
-      <span class="eyebrow">${esc(gr.g)}</span>
-      ${gr.items.map(([id, label, icon, count]) => `<a class="nav-item" href="#${id}" data-route="${id}" title="${esc(label)}">${ico(icon)}<span>${esc(label)}</span>${count ? `<b class="count">${count}</b>` : ''}</a>`).join('')}${gr.g === 'Protótipo' ? `<button class="nav-item" data-open="dlg-acct" title="Simular plano e conta">${ico('gem')}<span>Simular plano e conta</span></button>` : ''}
-    </div>`).join('')}
+    ${NAV.map((gr, gi) => { const o = open ? open[gr.g] !== false : gi === 0 || gr.items.some(([id]) => id === (location.hash.slice(1) || 'dashboard')); return `<div class="sb-group" data-group="${esc(gr.g)}">
+      <button class="sb-gh" aria-expanded="${o}" aria-controls="sbg-${gi}"><span>${esc(gr.g)}</span>${ico('chevd', 'sm')}</button>
+      <div class="sb-items" id="sbg-${gi}"${o ? '' : ' hidden'}>${gr.items.map(([id, label, icon, count]) => `<a class="nav-item" href="#${id}" data-route="${id}" title="${esc(label)}">${ico(icon)}<span>${esc(label)}</span>${count ? `<b class="count">${count}</b>` : ''}</a>`).join('')}${gr.g === 'Protótipo' ? `<button class="nav-item" data-open="dlg-acct" title="Simular plano e conta">${ico('gem')}<span>Simular plano e conta</span></button>` : ''}</div>
+    </div>`; }).join('')}
   </nav>
   <div class="sb-foot"><span class="av b">MA</span><div class="who"><b>Marina Alves</b><span>Administradora</span></div><button class="btn ghost icon sm" data-go="entrar" aria-label="Sair" data-tip="Sair">${ico('logout', 'sm')}</button></div>`;
 }
 function topbarHTML() {
   return `
   <a class="mlogo logo" href="#dashboard" aria-label="Belture"><span class="word"></span><span class="mark"></span></a>
-  <div class="crumbs"><span id="crumbGroup"></span>${ico('chev', 'sm')}<b id="crumbPage"></b></div><span class="ro-chip" id="roChip" hidden>${ico('eye', 'sm')}Somente leitura</span>
-  <span class="spacer"></span>
-  <div class="cluster glass acct" id="acct" role="group" aria-label="Conta e cobrança"></div>
   <button class="cmdk glass" data-palette>${ico('search', 'sm')}<span>Buscar leads, campanhas, telas</span><span class="kbd">⌘K</span></button>
-  <div class="cluster glass" role="group" aria-label="Preferências">
+  <div class="cluster glass prefs" role="group" aria-label="Preferências">
     <button class="btn ghost icon" data-sound-toggle aria-pressed="false" aria-label="Ligar sons" data-tip="Sons desligados">${ico('vol', 's-on')}${ico('volx', 's-off')}</button>
     <button class="btn ghost icon" data-theme-toggle aria-label="Alternar tema" data-tip="Tema">${ico('sun', 't-sun')}${ico('moon', 't-moon')}</button>
     <button class="btn ghost icon" aria-haspopup="menu" aria-controls="pop-notif" aria-expanded="false" aria-label="Notificações, 3 novas" data-tip="Notificações">${ico('bell')}<i class="bell-dot"></i></button>
   </div>
+  <span class="ro-chip" id="roChip" hidden>${ico('eye', 'sm')}Somente leitura</span>
+  <span class="spacer"></span>
+  <div class="cluster glass acct" id="acct" role="group" aria-label="Conta e cobrança"></div>
   <span class="primary" id="primarySlot"></span>`;
 }
 function tabbarHTML() {
@@ -8977,9 +8965,16 @@ document.addEventListener('submit', e => {
 /* rascunho: deixa entrar no assistente mesmo com envio travado */
 document.addEventListener('click', e => { if (e.target.closest('[data-draft]')) { const b = $$('.is-blocked[data-go="campanha-nova"]'); b.forEach(x => x.classList.remove('is-blocked')); setTimeout(markBlocked, 0); } }, true);
 
+/* seções do menu: recolhe e abre, lembra a escolha; a seção da tela atual sempre abre */
+function setGroup(h, on) {
+  h.setAttribute('aria-expanded', on); h.nextElementSibling.hidden = !on;
+  const st = {}; $$('.sidebar .sb-gh').forEach(b => st[b.closest('.sb-group').dataset.group] = b.getAttribute('aria-expanded') === 'true');
+  store.set('bel.groups', JSON.stringify(st));
+}
 function mountShell() {
   const app = $('.app'), sb = $('.sidebar'), tb = $('.topbar'), tab = $('.tabbar');
   sb.innerHTML = sidebarHTML(); tb.innerHTML = topbarHTML(); tab.innerHTML = tabbarHTML();
+  sb.addEventListener('click', e => { const h = e.target.closest('.sb-gh'); if (h) setGroup(h, h.getAttribute('aria-expanded') !== 'true'); });
   const hw = document.createElement('div'); hw.className = 'headwrap'; tb.before(hw); hw.append(tb); hw.insertAdjacentHTML('beforeend', OVERDUE_HTML);
   document.body.insertAdjacentHTML('beforeend', ACCT_SIM);
   $('.od-tog').addEventListener('click', () => { store.set('bel.odmin', store.get('bel.odmin', '0') === '1' ? '0' : '1'); syncBilling(); });
@@ -9013,7 +9008,6 @@ function route() {
   document.body.classList.toggle('auth', !!def.auth);
   const nav = NAV_INDEX[def.nav || id];
   const group = def.group || nav?.group || '';
-  $('#crumbGroup').textContent = group; $('#crumbPage').textContent = def.title || nav?.label || '';
   document.title = (def.title || nav?.label || 'Belture') + ' · Belture';
   const slot = $('#primarySlot'); slot.innerHTML = '';
   slot.innerHTML = primaryHTML(def.primary);
@@ -9023,7 +9017,9 @@ function route() {
   $$('[data-tab]').forEach(a => a.removeAttribute('aria-current'));
   const tabFor = { dashboard: 'dashboard', campanhas: 'campanhas', 'campanha-nova': 'campanhas', 'campanha-detalhe': 'campanhas', conversas: 'conversas', leads: 'leads', listas: 'leads', segmentos: 'leads' }[navId];
   if (tabFor) $(`[data-tab="${tabFor}"]`)?.setAttribute('aria-current', 'page');
-  $(`.nav-item[aria-current="page"]`)?.scrollIntoView({ block: 'nearest' });
+  const cur = $('.sidebar .nav-item[aria-current="page"]'), box = cur?.closest('.sb-items');
+  if (box?.hidden) setGroup(box.previousElementSibling, true);
+  cur?.scrollIntoView({ block: 'nearest' });
   if (!el.dataset.inited && def.init) { def.init(el, state[id]); el.dataset.inited = '1'; }
   def.enter?.(el, state[id]);
   const fab = $('.tabbar .fab');   // no celular, o botão flutuante é a ação principal da tela (uma só)
@@ -9455,12 +9451,10 @@ function dashRender() {
     ['Resultado', 'entregues e lidas são parte dos enviados', ['sent', ...(by.delivered.v ? ['delivered'] : []), ...(by.read.v ? ['read'] : [])]],
     ['Não enviados', 'devolvidos ao saldo', ['failed', 'shortlink_failed_pending', 'cancelled']]]
     : [['Entrada', 'recebidos pela API', ['PENDING', 'READY_TO_SEND']], ['Provedor', 'na fila e aceitos', ['QUEUED_FOR_PROVIDER', 'PROVIDER_ACCEPTED']], ['Resultado', 'confirmados pelo provedor', ['FINAL_SUCCESS']], ['Não enviados', 'devolvidos ao saldo', ['BILLING_REJECTED', 'PROVIDER_FAILED', 'FINAL_FAILED']]];
-  const attnKey = isC ? 'shortlink_failed_pending' : 'BILLING_REJECTED', attn = by[attnKey];
-  const attnHtml = attn.v > 0 && !D.hideAttn[D.src] ? `<div class="callout rel-attn" role="status">${ico('alert')}<div class="txt"><b>${f.n(attn.v)} envios ${isC ? 'parados por falha no link curto' : 'recusados por falta de saldo'}</b><span>${isC ? 'Eles não foram cobrados. Revise o domínio do encurtador para liberar a fila.' : 'Eles não foram cobrados. Faça uma recarga para liberar novos envios pela API.'}</span></div><button class="btn outline" data-go="${isC ? 'encurtador' : 'saldo'}">${isC ? 'Abrir encurtador' : 'Fazer recarga'}</button><button class="btn ghost icon" data-rel-hide-attn aria-label="Dispensar aviso">${ico('x', 'sm')}</button></div>` : '';
   const v = d.val, ctr = d.clicks.v / by[d.okKey].v * 100;
   const lineDefs = [...(isC ? CS : AS).map(([k, l]) => [k, l]), ['clicks', 'Cliques']];
   const sel = D.lines[D.src];
-  host.innerHTML = `${attnHtml}
+  host.innerHTML = `
   <section class="rel-sec" aria-labelledby="relValT"><div class="rel-sh"><h2 class="h2" id="relValT">Valor dos envios</h2><span class="hint">Total = todos os envios × preço. Cobrado = enviados. Devolvido = falhas e cancelamentos.</span></div>
     <div class="card rel-vals">
       <div>${tile({ label: 'Valor total', icon: 'wallet', v: v.total, prev: d.valPrev, kind: 'neutral', money: true, big: true, sub: v.prog > 0 ? 'inclui ' + f.brl(v.prog) + ' em andamento' : 'todos os envios' })}</div>
